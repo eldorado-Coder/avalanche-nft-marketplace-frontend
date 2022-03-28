@@ -3,3 +3,62 @@
   background-color: aquamarine;
 }
 
+.nft-item {
+  height: 25rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.item-text-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.item-text-type {
+  font-size: 12px;
+}
+
+.item-text-price {
+  font-size: 15px;
+}
+
+.item-text-like {
+  font-size: 18px;
+}
+
+.item-text-buy {
+  font-size: 17px;
+  font-weight: bold;
+  color: rgb(32, 129, 226);
+  cursor: pointer;
+}
+
+.text-button-connect {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.img-crypto {
+  height: 14px;
+  width: 14px;
+}
+
+.img-like {
+  height: 16px;
+  width: 16px;
+  cursor: pointer;
+}
+
+.footer-container {
+  background-color: rgb(24, 104, 183);
+  font-size: 20px;
+}
+
+.button-container {
+  height: 24px;
+}
+
+.button-address {
+  cursor: pointer;
+}
