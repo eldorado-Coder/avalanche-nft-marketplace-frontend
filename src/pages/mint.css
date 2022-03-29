@@ -36,7 +36,7 @@
     border-radius: 10px;
     border: 1px solid rgb(229, 232, 235);
     width: 100%;
-    padding: 12px
+    padding: 12px;
 }
 .amount-input:active {
     border-color: rgb(112, 122, 131) !important;

@@ -71,7 +71,7 @@ const MintPage = props => {
                     const url = `https://ipfs.infura.io/ipfs/${created.path}`;
                     setImgUrl(url);
                 })();
-            } catch(err) {
+            } catch (err) {
                 console.log('Error uploading files: ', err);
                 Swal.fire({
                     title: 'Uploading to IPFS',
@@ -124,7 +124,7 @@ const MintPage = props => {
                     <input type='number' name='amount' value={amount} onChange={(e) => setAmount(e.target.value)} className='amount-input mt-2'></input>
                 </div>
             </div>
-
+            
             <div className="mb-3">
                 <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
                 <input className="form-control" id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} required />
