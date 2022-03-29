@@ -42,6 +42,7 @@ const MintPage = props => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [metaUrl, setMetaUrl] = useState('');
+    const [amount, setAmount] = useState(0)
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
@@ -67,17 +68,17 @@ const MintPage = props => {
         //files.forEach(file => URL.revokeObjectURL(file.preview));
         files.forEach(file => {
             try {
-                (async() => {
-                    
+                (async () => {
+
                 })();
-            } catch(err) {
+            } catch (err) {
                 console.log('Error uploading files: ', err);
             }
         });
     }, [files]);
 
     const clickCreate = () => {
-        if(name == '' || description == '' || metaUrl == '') {
+        if (name == '' || description == '' || metaUrl == '') {
             Swal.fire({
                 title: 'Warning',
                 text: 'Fill in the required fields(Name, Description, Image)',
@@ -90,26 +91,31 @@ const MintPage = props => {
     return (
         <section className="container create-container pb-2">
             <h1>Create New Item</h1>
-            <div>
-                <h4>Image, Audio or Video</h4>
-                <div {...getRootProps({ className: 'dropzone' })}>
-                    <input {...getInputProps()} />
-                    <span>File types supported: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. Max size: 100 MB</span>
-                    <div className='dropzone-placeholder'>
-                        <div className='dropzone-placeholder-mask'>
-                            <svg xmlns="http://www.w3.org/2000/svg" opacity={0.15} width={84} height={84} fill="currentColor" className="bi bi-card-image" viewBox="0 0 16 16">
-                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z" />
-                            </svg>
+            <div className='row d-flex align-items-center'>
+                <div className='col-md-12 col-lg-6'>
+                    <h4>Image</h4>
+                    <div {...getRootProps({ className: 'dropzone' })} >
+                        <input {...getInputProps()} />
+                        <span>File types supported: JPG, PNG Max size: 100 MB</span>
+                        <div className='dropzone-placeholder'>
+                            <div className='dropzone-placeholder-mask'>
+                                <svg xmlns="http://www.w3.org/2000/svg" opacity={0.15} width={84} height={84} fill="currentColor" className="bi bi-card-image" viewBox="0 0 16 16">
+                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                    <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z" />
+                                </svg>
+                            </div>
                         </div>
-
                     </div>
+                    <aside style={thumbsContainer}>
+                        {thumbs}
+                    </aside>
                 </div>
-                <aside style={thumbsContainer}>
-                    {thumbs}
-                </aside>
-            </div>
 
+                <div className='col-md-12 col-lg-6'>
+                    <label htmlFor='amount form-label font-weight-bold'>Amount</label>
+                    <input type='number' name='amount' value={amount} onChange={(e) => setAmount(e.target.value)} className='amount-input mt-2'></input>
+                </div>
+            </div>
             <div className="mb-3">
                 <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
                 <input className="form-control" id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} required />
