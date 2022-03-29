@@ -30,3 +30,15 @@
     font-size: 1.5rem;
     font-weight: 500;
 }
+.amount-input{
+    height: 50px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    border: 1px solid rgb(229, 232, 235);
+    width: 100%;
+    padding: 12px
+}
+.amount-input:active {
+    border-color: rgb(112, 122, 131) !important;
+    box-shadow: rgb(4 17 29 / 25%) 0px 0px 8px 0px !important;
+} 
