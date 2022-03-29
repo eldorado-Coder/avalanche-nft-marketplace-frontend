@@ -26,7 +26,7 @@ const NFTItem = props => {
                     <div className='d-flex flex-column justify-content-start align-items-end me-2'>
                         <p className='mb-0 text-secondary item-text-type'>Price</p>
                         <div className='d-flex flex-row justify-content-start align-items-center'>
-                            <img src={props.type == 1 ? AvaxLogo : UsdtLogo} alt='crypto' className='img-crypto' />
+                            <img src={AvaxLogo} alt='crypto' className='img-crypto' />
                             <p className='item-text-price mb-0 ms-2'>{props.price + ''}</p>
                         </div>
                         <div className='d-flex flex-row justify-content-start align-items-center mt-3'>

@@ -1,0 +1,16 @@
+[
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "uri",
+        "type": "string"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

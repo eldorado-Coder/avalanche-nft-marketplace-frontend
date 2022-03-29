@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './mint.css'
-import { useState } from "react";
 import { useDropzone } from 'react-dropzone';
+import { create } from 'ipfs-http-client';
+import Swal from 'sweetalert2';
+
+const client = create('https://ipfs.infura.io:5001/api/v0');
 
 const thumbsContainer = {
     display: 'flex',
@@ -38,6 +41,7 @@ const MintPage = props => {
     const [files, setFiles] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [metaUrl, setMetaUrl] = useState('');
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
@@ -53,21 +57,38 @@ const MintPage = props => {
     const thumbs = files.map(file => (
         <div style={thumb} key={file.name}>
             <div style={thumbInner}>
-                <img
-                    src={file.preview}
-                    style={img}
-                />
+                <img src={file.preview} alt='alt' style={img} />
             </div>
         </div>
     ));
 
     useEffect(() => {
         // Make sure to revoke the data uris to avoid memory leaks
-        files.forEach(file => URL.revokeObjectURL(file.preview));
+        //files.forEach(file => URL.revokeObjectURL(file.preview));
+        files.forEach(file => {
+            try {
+                (async() => {
+                    
+                })();
+            } catch(err) {
+                console.log('Error uploading files: ', err);
+            }
+        });
     }, [files]);
 
+    const clickCreate = () => {
+        if(name == '' || description == '' || metaUrl == '') {
+            Swal.fire({
+                title: 'Warning',
+                text: 'Fill in the required fields(Name, Description, Image)',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
     return (
-        <section className="container create-container">
+        <section className="container create-container pb-2">
             <h1>Create New Item</h1>
             <div>
                 <h4>Image, Audio or Video</h4>
@@ -91,14 +112,14 @@ const MintPage = props => {
 
             <div className="mb-3">
                 <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                <input className="form-control" id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} />
+                <input className="form-control" id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="mb-3">
                 <label htmlFor="exampleFormControlTextarea1" className="form-label">Description</label>
-                <textarea onChange={(e) => setDescription(e.target.value)} value={description} className="form-control" placeholder='Provide a detail description of your item.' id="exampleFormControlTextarea1" rows="3"></textarea>
+                <textarea onChange={(e) => setDescription(e.target.value)} value={description} className="form-control" placeholder='Provide a detail description of your item.' id="exampleFormControlTextarea1" rows="3" required></textarea>
             </div>
             <div className='mt-3'>
-                <button type="button" className="btn btn-secondary">Create</button>
+                <button type="button" className="btn btn-secondary" onClick={clickCreate}>Create</button>
             </div>
         </section>
     );

@@ -12,6 +12,7 @@ import DetailPage from './pages/DetailPage';
 import MintPage from './pages/MintPage';
 import ProfilePage from './pages/ProfilePage';
 import SellPage from './pages/SellPage';
+import { login } from './api/api';
 
 function App() {
   const [isLoaded, setLoaded] = useState(false);
@@ -32,6 +33,14 @@ function App() {
     else
       setConn(false);
   }, [active]);
+
+  useEffect(() => {
+    if(conn) {
+      login(account).then(res => {
+        console.log(res);
+      });
+    }
+  }, [conn]);
 
   const connectMetamask = async() => {
     if(window.ethereum) {

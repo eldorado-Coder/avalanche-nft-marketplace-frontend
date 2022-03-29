@@ -43,7 +43,7 @@ const ProfilePage = props => {
                     </svg>
                     <span>Created</span>
                 </div>
-                <button type="button" class="btn btn-secondary ms-auto me-4 btn-create" onClick={clickCreate}>
+                <button type="button" className="btn btn-secondary ms-auto me-4 btn-create" onClick={clickCreate}>
                     Create
                 </button>
             </nav>

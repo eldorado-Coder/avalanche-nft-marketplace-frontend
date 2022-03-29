@@ -7,7 +7,7 @@ const Header = props => {
         navigate('/marketplace');
     }
     return (
-        <header className='d-flex flex-row justify-content-between align-items-center vw-100 p-3 border-bottom'>
+        <header className='d-flex flex-row justify-content-between align-items-center p-3 border-bottom'>
             <div className='d-flex flex-row justify-content-start align-items-center' style={{ cursor: 'pointer' }} onClick={clickLogo}>
                 <Logo />
                 <h3 className='ms-2 mb-0 text-info'>NFT MARKET</h3>
