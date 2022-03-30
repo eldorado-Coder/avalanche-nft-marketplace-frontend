@@ -58,8 +58,8 @@ const SellPage = props => {
                             createOrder(orderId, tokenId, '0x0000000000000000000000000000000000000000', parseEther(price).toString(), props.account).then(res => {
                                 if(res != null) {
                                     Swal.fire({
-                                        title: 'Minting Report',
-                                        text: 'New NFTs are minted successfully',
+                                        title: 'Order Report',
+                                        text: 'The NFT is ready for sale',
                                         icon: 'success',
                                         confirmButtonText: 'OK'
                                     });
