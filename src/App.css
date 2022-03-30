@@ -62,3 +62,7 @@
 .button-address {
   cursor: pointer;
 }
+
+.main-container {
+  min-height: calc(100vh - 120px);
+}

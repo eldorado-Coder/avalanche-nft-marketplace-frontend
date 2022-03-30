@@ -3,13 +3,35 @@ import './profile.css'
 import { useState, useRef } from "react";
 import ProfileItem from '../components/ProfileItem';
 import { useNavigate } from 'react-router-dom';
+import { login, getTokenData } from '../api/api';
 
 const ProfilePage = props => {
 
     const navigate = useNavigate();
+    //const [userInfo, setUserInfo] = useState({});
+    const [collectedData, setCollectedData] = useState([]);
+    const [createdData, setCreatedData] = useState([]);
     const [navIndex, setNavIndex] = useState(0)
     const navCollected = useRef();
     const navCreated = useRef();
+
+    useEffect(() => {
+        login(props.account).then(res => {
+            if(res != null) {
+                //setUserInfo(res);
+                (async() => {
+                    if(res.owned.length > 0) {
+                        const collected = await getTokenData(res.owned);
+                        setCollectedData(collected);
+                    }
+                    if(res.created.length > 0) {
+                        const created = await getTokenData(res.created);
+                        setCreatedData(created);
+                    }
+                })();
+            }
+        });
+    }, []);
 
     useEffect(() => {
         if (navIndex == 0) {
@@ -50,46 +72,28 @@ const ProfilePage = props => {
             {navIndex == 0 ?
                 <div className='container mt-4'>
                     <div className='row'>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'collected'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/YX0It7W6UBZD0NTDHgGFew9k7ZMQrX77XPXOsbAGqUDwMMc7vL1OI-NLr5zPFnWSLFJ7XnF4fQbfTzcNiHCWNeI4JEwOW6H6sVF3RYg=w600' />
-                        </div>
+                        {
+                            collectedData.map((item, index) => {
+                                return (
+                                    <div className='col-xs-12 col-sm-6 col-lg-4 my-2' key={index}>
+                                        <ProfileItem type={'collected'} data={item} account={props.account} />
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </div> :
                 <div className='container mt-4'>
                     <div className='row'>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2 item-container'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
-                        <div className='col-xs-12 col-sm-6 col-lg-4 my-2'>
-                            <ProfileItem type={'created'} collectionName={'collectionName'} itemName={'itemName'} imgUrl='https://lh3.googleusercontent.com/NlNzdG3snmQ-14cX1sfJbsExFzphdihBh4Xz94yEBX4jhVjwIR18Y4oRfBB-jH5IqjOfbI9iwF0xPWEpSB5gWzT4_eTlgGSt3cMxpA=w600' />
-                        </div>
+                        {
+                            createdData.map((item, index) => {
+                                return (
+                                    <div className='col-xs-12 col-sm-6 col-lg-4 my-2 item-container' key={index}>
+                                        <ProfileItem type={'created'} data={item} account={props.account} />
+                                    </div>
+                                );
+                            })
+                        }
                     </div>
                 </div>
             }

@@ -1,16 +1,89 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './detail.css'
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { getOrder, getTokenData } from '../api/api';
+import { ethers } from 'ethers';
+import { Contract } from '@ethersproject/contracts';
+import { BigNumber } from '@ethersproject/bignumber';
+import marketplaceABI from '../abi/marketplace.abi.json';
+import Swal from 'sweetalert2';
+import { buyOrder } from '../api/api';
+
 const data = [{ name: '2/19', AvgPrice: 400, pv: 400, amt: 400 }, { name: '2/20', AvgPrice: 4020, pv: 4300, amt: 4100 }, { name: '2/21', AvgPrice: 1020, pv: 3300, amt: 2000 }]
 
 const DetailPage = props => {
     const cryptoLogos = ["https://i.ibb.co/MPfK2mG/avax.png", "https://i.ibb.co/WcCJyNp/usdt.png"];
+    const contractAddress = "0x6be1203c494601d1EBEb59e66c31BFFeC0231f97";
+
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const [orderId, setOrderId] = useState(0);
+    const [orderData, setOrderData] = useState(null);
+    const [tokenData, setTokenData] = useState(null);
+    const [metaData, setMetaData] = useState(null);
+
+    useEffect(() => {
+        const path_parts = pathname.split('/');
+        const orderId = parseInt(path_parts[2]);
+        setOrderId(orderId);
+        getOrder(orderId).then(res => {
+            console.log("order: ", res);
+            if(res != null) {
+                setOrderData(res);
+                const token_array = [];
+                token_array.push(res.tokenId);
+                getTokenData(token_array).then(result => {
+                    console.log("token:", result);
+                    if(result != null) {
+                        setTokenData(result[0]);
+                        fetch(result[0].tokenUri).then(response => {
+                            response.json().then(meta => {
+                                console.log("meta: ", meta);
+                                setMetaData(meta);
+                            });
+                        });
+                    }
+                });
+            }
+        })
+    }, []);
+
+    const clickBuy = () => {
+        
+        if(orderData.seller == props.account) {
+            Swal.fire({
+                title: 'Purchase Report',
+                text: 'This is your NFT and you cannot buy it',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+        const contract = new Contract(contractAddress, marketplaceABI, props.library).connect(props.library.getSigner(props.account));
+        contract.buyForOrder(orderId, { value: BigNumber.from(orderData.price) }).then(res => {
+            res.wait().then(() => {
+                buyOrder(orderId, props.account).then(res => {
+                    if(res != null) {
+                        Swal.fire({
+                            title: 'Purchase Report',
+                            text: 'You purchased the NFT successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        navigate('/marketplace');
+                    }
+                })
+            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
+        
+    }
 
     return (
         <div className='container detail-container pt-3 pb-2'>
             <div className='row gx-5'>
                 <div className='col-md-12 col-lg-6 d-flex align  flex-column'>
-                    <img src="https://lh3.googleusercontent.com/MtyEnL-gtOQq5QCIaV4wR5MNDoxD_pURqqsm-1gz6cVU_-aK2DOE6m3dF-wr5L22DjvaBnlsaGPghXXJHviXRG6XI-dz8-tHFQaaxA=w600" style={{ width: '100%', height: '510px' }}></img>
+                    <img src={metaData == null ? '' : metaData.image} style={{ width: '100%', height: '510px' }}></img>
                     <div className="accordion mt-4" id="accordion-description">
                         <div className="accordion-item">
                             <h2 className="accordion-header" id="headingThree">
@@ -24,7 +97,7 @@ const DetailPage = props => {
                             <div id="collapseThree" className="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#accordion-description">
                                 <div className="accordion-body">
                                     <span>Created by</span>
-                                    <a href='' className='text-decoration-none ms-2'>WorldOfWomenGalaxy
+                                    <a href='' className='text-decoration-none ms-2'>NFT Marketplace
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-patch-check-fill ms-2 mb-2" viewBox="0 0 16 16">
                                             <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01-.622-.636zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708z" />
                                         </svg>
@@ -36,15 +109,15 @@ const DetailPage = props => {
                    
                 </div>
                 <div className='col-md-12 col-lg-6'>
-                    <p className='mt-4' style={{ fontSize: '30px' }}>WoWG NFT</p>
+                    <p className='mt-4' style={{ fontSize: '30px' }}>{metaData == null ? '' : metaData.name + ' #' + tokenData.tokenId}</p>
                     <div>
                         <span>Owned by </span>
-                        <a href='/' className='text-decoration-none'>0xa823</a>
+                        <a href='/' className='text-decoration-none'>{tokenData == null ? '' : tokenData.owner.substr(0, 5) + '...' + tokenData.owner.substr(38, 4)}</a>
                         <span role='button' className='btn-favorite '>
                             <svg className="ms-4 bi bi-heart-fill" role="button" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                                 <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                             </svg>
-                            <span className='ms-2'>16 favorites</span>
+                            <span className='ms-2'>{ (tokenData == null ? '0' : tokenData.likes.length) + ' favorites' }</span>
                         </span>
                     </div>
                     <div className='current-price-div mt-4'>
@@ -52,15 +125,15 @@ const DetailPage = props => {
                         <div className='d-flex justify-content-between align-items-end'>
                             <div className='d-flex align-items-end'>
                                 <img src='https://i.ibb.co/MPfK2mG/avax.png' alt='AVAX' style={{ width: '40px', height: '40px' }}/>
-                                <span className='fw-bolder display-4 mt-2 ms-2' style={{ lineHeight: '50px' }}>0.01</span>
-                                <span>($ 12.3)</span>
+                                <span className='fw-bolder display-4 mt-2 ms-2' style={{ lineHeight: '50px' }}>{orderData == null ? '0' : ethers.utils.formatEther(orderData.price)}</span>
+                                <span></span>
                             </div>
-                            <div className='btn-buy-now font-weight-bold'>
+                            <div className='btn-buy-now font-weight-bold' onClick={clickBuy}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-wallet-fill me-2" viewBox="0 0 16 16">
                                     <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v2h6a.5.5 0 0 1 .5.5c0 .253.08.644.306.958.207.288.557.542 1.194.542.637 0 .987-.254 1.194-.542.226-.314.306-.705.306-.958a.5.5 0 0 1 .5-.5h6v-2A1.5 1.5 0 0 0 14.5 2h-13z" />
                                     <path d="M16 6.5h-5.551a2.678 2.678 0 0 1-.443 1.042C9.613 8.088 8.963 8.5 8 8.5c-.963 0-1.613-.412-2.006-.958A2.679 2.679 0 0 1 5.551 6.5H0v6A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-6z" />
                                 </svg>
-                                <span>Buy Now </span>
+                                <span>Buy Now</span>
                             </div>
                         </div>
                     </div>
@@ -210,8 +283,8 @@ const DetailPage = props => {
                             </h2>
                             <div id="collapseFour" className="accordion-collapse collapse show" aria-labelledby="headingFour" data-bs-parent="#accordion-details">
                                 <div className="accordion-body">
-                                    <div className='f-flex justify-content-between'><span>Contract Address</span><a href='' className='text-decoration-none float-right'>0x23423255243</a></div>
-                                    <div className='f-flex justify-content-between'><span>Token ID</span><a href='' className='text-decoration-none float-right'>4256</a></div>
+                                    <div className='f-flex justify-content-between'><span>Contract Address</span><a href='' className='text-decoration-none float-right'>0xdC16363e321fa962A85D5455c71572F35d7aB576</a></div>
+                                    <div className='f-flex justify-content-between'><span>Token ID</span><a href='' className='text-decoration-none float-right'>{tokenData == null ? '0' : tokenData.tokenId}</a></div>
                                     <div className='f-flex justify-content-between'><span>Blockchain</span><span className='float-right'>Avalanche</span></div>
                                 </div>
                             </div>

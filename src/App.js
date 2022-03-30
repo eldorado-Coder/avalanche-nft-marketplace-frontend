@@ -70,17 +70,17 @@ function App() {
         <Header isConnected={conn} account={account} onClick={connectMetamask} />
         <Routes>
           <Route path='/' exact element={<Navigate to='/marketplace' />} />
-          <Route path='/marketplace' exact element={<MainPage />} />
+          <Route path='/marketplace' exact element={<MainPage account={account} />} />
           <Route path='*' element={<Navigate to='/' />} />
           <Route path='/detail'>
-            <Route path=':id' element={<DetailPage />} />
+            <Route path=':id' element={<DetailPage library={library} account={account} />} />
           </Route>
           <Route path='/create' exact element={<MintPage library={library} account={account} />} />
           <Route path='/profile'>
-            <Route path=':addr' element={<ProfilePage isConnected={conn} />} />
+            <Route path=':addr' element={<ProfilePage isConnected={conn} account={account} />} />
           </Route>
           <Route path='/sell'>
-            <Route path=':id' element={<SellPage />} />
+            <Route path=':id' element={<SellPage library={library} account={account} />} />
           </Route>
         </Routes>
         <Footer />

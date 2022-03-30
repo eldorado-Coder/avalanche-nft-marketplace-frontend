@@ -24,7 +24,7 @@ const Header = props => {
 const ConnectButton = ({ onClick }) => {
     return (
         <div className='d-flex flex-column justify-content-center align-items-center bg-success text-white border border-white rounded-pill py-2 px-3' onClick={onClick}>
-            <p className='text-button-connect mb-0'>METAMASK</p>
+            <p className='text-button-connect mb-0'>LOG IN</p>
         </div>
     );
 };

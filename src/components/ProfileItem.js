@@ -1,35 +1,86 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import './profile.css';
 import { useNavigate } from 'react-router-dom';
-const AVAX_ICON = '/img/avax.png'
+import { addToLike } from '../api/api';
+
+const AVAX_ICON = '/img/avax.png';
 
 const ProfileItem = (props) => {
     const navigate = useNavigate();
-    const imgDiv = useRef()
-    const [width, setWidth] = useState()
-    console.log(props)
+    const imgDiv = useRef();
+    const [width, setWidth] = useState();
+    const [imgUrl, setImgUrl] = useState('');
+    const [itemName, setItemName] = useState('');
+    const [favCount, setFavCount] = useState(0);
+    const [isFav, setFav] = useState(false);
+    
     useLayoutEffect(() => {
         function updateSize() {
-            setWidth(imgDiv.current.getBoundingClientRect().width)
+            setWidth(imgDiv.current.getBoundingClientRect().width);
         }
         window.addEventListener('resize', updateSize);
         updateSize();
         return () => window.removeEventListener('resize', updateSize);
     }, []);
+    /*
+    useEffect(() => {
+        //console.log(props.data.tokenUri);
+        fetch(props.data.tokenUri).then(res => {
+            res.json().then(result => {
+                //console.log(result);
+                setImgUrl(result.image);
+                const item_name = result.name + ' #' + props.data.tokenId;
+                setItemName(item_name);
+                setFavCount(props.data.likes.length);
+                const idx = props.data.likes.findIndex(element => element == props.account);
+                if(idx > -1)
+                    setFav(true);
+            });
+        });
+    }, []);
+    */
+    useEffect(() => {
+        if(props.data.tokenUri) {
+            fetch(props.data.tokenUri).then(res => {
+                res.json().then(result => {
+                    //console.log(result);
+                    setImgUrl(result.image);
+                    const item_name = result.name + ' #' + props.data.tokenId;
+                    setItemName(item_name);
+                    setFavCount(props.data.likes.length);
+                    const idx = props.data.likes.findIndex(element => element == props.account);
+                    if(idx > -1)
+                        setFav(true);
+                });
+            });
+        }
+    }, [props.data]);
 
     const clickSell = () => {
-        navigate('/sell/12');
+        navigate('/sell/' + props.data.tokenId);
     }
+
+    const clickFavorite = () => {
+        addToLike(props.data.tokenId, props.account).then(res => {
+            if(res != null) {
+                setFav(true);
+                setFavCount(favCount => favCount + 1);
+            }
+        });
+    }
+
+    if(props.data == null)
+        return null;
 
     return (
         <div className={props.className}>
             <div className='profile-item' role={'button'}>
                 <div className='d-flex align-items-center' ref={imgDiv} style={{ height: width }}>
-                    <img src={props.imgUrl} />
+                    <img src={imgUrl} alt='alt' />
                 </div>
                 <div className='title-div d-flex flex-column'>
                     <span className='collection-title'>NFT Marketplace</span>
-                    <span className='item-title'>{props.itemName}</span>
+                    <span className='item-title'>{itemName}</span>
                 </div>
                 <div className='bottom-div'>
                     {/* <svg id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" xmlns="http://www.w3.org/2000/svg" data-placement="top" title="More" width="20" height="20" fill="currentColor" className="bi bi-three-dots  dropdown-toggle" viewBox="0 0 16 16">
@@ -81,16 +132,22 @@ const ProfileItem = (props) => {
                             </svg> */}
                                 <span className='ms-2 sell-caption text-primary' onClick={clickSell}>Sell</span>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart ms-auto icon-favorite" data-toggle="tooltip" data-placement="top" title="favorite" viewBox="0 0 16 16">
-                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
-                            </svg>
-                            <span className='ms-2'>0</span>
+                            {
+                                isFav ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill ms-auto icon-favorite-select" viewBox="0 0 16 16">
+                                        <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                    </svg>
+                                : <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-heart ms-auto icon-favorite" data-toggle="tooltip" data-placement="top" title="favorite" viewBox="0 0 16 16" onClick={clickFavorite}>
+                                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                  </svg>
+                            }
+                            <span className='ms-2'>{favCount}</span>
                         </React.Fragment>
                     }
                     {props.type === "preview" &&
                         <React.Fragment>
                             <div className='d-flex align-items-center'>
-                                <img src={AVAX_ICON} width={24} height={24} className="mx-2" />
+                                <img src={AVAX_ICON} width={24} height={24} className="mx-2" alt='alt' />
                                 <span>{props.price ? props.price : 0}</span>
                             </div>
                         </React.Fragment>

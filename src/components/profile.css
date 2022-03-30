@@ -45,6 +45,9 @@
     color: rgb(235, 87, 87);
     transition: all 0.1s ease 0s;
 }
+.icon-favorite-select {
+    color: rgb(235, 87, 87);
+}
 .profile-item .dropdown-menu {
     max-width: 350px;
     transition-duration: 300ms;
