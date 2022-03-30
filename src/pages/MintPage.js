@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './mint.css'
 import { useDropzone } from 'react-dropzone';
-import { create } from 'ipfs-http-client';
 import Swal from 'sweetalert2';
-
-const client = create('https://ipfs.infura.io:5001/api/v0');
+import { Contract } from '@ethersproject/contracts';
+import NftABI from '../abi/nft.abi.json';
+import { uploadImageToPinata, uploadMetaDataToPinata } from '../api/pinata';
+import { createNft } from '../api/api';
 
 const thumbsContainer = {
     display: 'flex',
@@ -36,13 +37,16 @@ const img = {
     width: 'auto',
     height: '100%'
 };
+
 const MintPage = props => {
 
     const [files, setFiles] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState(1);
     const [imgUrl, setImgUrl] = useState('');
+
+    const contractAddress = "0xdC16363e321fa962A85D5455c71572F35d7aB576";
 
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
@@ -50,7 +54,7 @@ const MintPage = props => {
             setFiles(acceptedFiles.map(file => {
                 return Object.assign(file, {
                     preview: URL.createObjectURL(file)
-                })
+                });
             }));
         }
     });
@@ -67,8 +71,9 @@ const MintPage = props => {
         files.forEach(file => {
             try {
                 (async() => {
-                    const created = await client.add(file);
-                    const url = `https://ipfs.infura.io/ipfs/${created.path}`;
+                    const res = await uploadImageToPinata(file);
+                    //console.log(res);
+                    const url = 'https://gateway.pinata.cloud/ipfs/' + res.IpfsHash;
                     setImgUrl(url);
                 })();
             } catch (err) {
@@ -93,6 +98,79 @@ const MintPage = props => {
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
+            return;
+        }
+
+        if(amount < 1) {
+            Swal.fire({
+                title: 'Warning',
+                text: 'Amount is invalid',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        if(props.library) {
+            const contract = new Contract(contractAddress, NftABI, props.library).connect(props.library.getSigner(props.account));
+            const meta_data = {
+                name,
+                description,
+                image: imgUrl
+            };
+            
+            uploadMetaDataToPinata(meta_data).then(res => {
+                const url = 'https://gateway.pinata.cloud/ipfs/' + res.IpfsHash;
+                
+                if(amount < 2) {
+                    contract.mint(url).then(res => {
+                        res.wait().then(result => {
+                            const tokenId = result.events[0].args[2].toNumber();
+                            createNft(tokenId, url, props.account).then(res => {
+                                if(res != null) {
+                                    Swal.fire({
+                                        title: 'Minting Report',
+                                        text: 'A new NFT is minted successfully',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    setFiles([]);
+                                    setName('');
+                                    setDescription('');
+                                    setAmount(1);
+                                }
+                            });
+                        }).catch(err => console.log(err));
+                    }).catch(err => console.log(err));
+                } else {
+                    const uris = [];
+                    for(let i = 0; i < amount; i++)
+                        uris.push(url);
+                    contract.mintBatch(uris).then(res => {
+                        res.wait().then(result => {
+                            const txResults = [];
+                            result.events.forEach(event => {
+                                const tokenId = event.args[2].toNumber();
+                                //console.log(tokenId);
+                                const txRes = createNft(tokenId, url, props.account);
+                                txResults.push(txRes);
+                            });
+                            Promise.all(txResults).then(() => {
+                                Swal.fire({
+                                    title: 'Minting Report',
+                                    text: 'New NFTs are minted successfully',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                                setFiles([]);
+                                setName('');
+                                setDescription('');
+                                setAmount(1);
+                            });
+                        }).catch(err => console.log(err));
+                    }).catch(err => console.log(err));
+                }
+            }).catch(err => console.log(err));
         }
     }
 
@@ -139,6 +217,5 @@ const MintPage = props => {
         </section>
     );
 }
-
 
 export default MintPage;

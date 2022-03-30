@@ -50,3 +50,20 @@ export async function getTokenData(tokenIds) {
 
     return result;
 }
+
+export async function createNft(tokenId, tokenUri, account) {
+    const result = await Axios.post('/nfts/create', {
+        tokenId: tokenId,
+        tokenUri: tokenUri,
+        operator: account
+    }).then(
+        async function(response) {
+            return response.data;
+        }
+    ).catch(err => {
+        console.log(err);
+        return null;
+    });
+
+    return result;
+}

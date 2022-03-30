@@ -75,7 +75,7 @@ function App() {
           <Route path='/detail'>
             <Route path=':id' element={<DetailPage />} />
           </Route>
-          <Route path='/create' exact element={<MintPage />} />
+          <Route path='/create' exact element={<MintPage library={library} account={account} />} />
           <Route path='/profile'>
             <Route path=':addr' element={<ProfilePage isConnected={conn} />} />
           </Route>
