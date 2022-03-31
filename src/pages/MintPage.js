@@ -63,7 +63,7 @@ const MintPage = props => {
             try {
                 (async () => {
                     const res = await uploadImageToPinata(file);
-                    const url = 'https://gateway.pinata.cloud/ipfs/' + res.IpfsHash;
+                    const url = 'https://breakout.mypinata.cloud/ipfs/' + res.IpfsHash;
                     setImgUrl(url);
                 })();
             } catch (err) {
