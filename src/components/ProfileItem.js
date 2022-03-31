@@ -76,7 +76,7 @@ const ProfileItem = (props) => {
         <div className={props.className}>
             <div className='profile-item' role={'button'}>
                 <div className='d-flex align-items-center' ref={imgDiv} style={{ height: width }}>
-                    <img src={imgUrl} alt='alt' />
+                    <img src={imgUrl} alt='alt' className='h-100 w-100'/>
                 </div>
                 <div className='title-div d-flex flex-column'>
                     <span className='collection-title'>NFT Marketplace</span>

@@ -9,7 +9,6 @@ const API_SECRET = '83ee05be67b55a1ff93c75dd81162ef872a97b6362c4f074e00489c2ab04
 export async function uploadImageToPinata(data) {
     const formData = new FormData();
     formData.append('file', data);
-
     const result = await Axios.post(url_file, formData, {
         maxContentLength: 'Infinity',
         headers: {

@@ -10,7 +10,7 @@ const Loading = () => {
     };
 
     return (
-        <div className='vw-100 vh-100 d-flex flex-column justify-content-center align-items-center'>
+        <div className='vw-90 d-flex flex-column justify-content-center align-items-center' style={{height: 'calc(100vh - 122px)'}}>
             <Lottie animationData={loadingJson} loop={true} height={400} width={400} style={style} autoplay={true} />
         </div>
     );

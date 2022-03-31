@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../App.css'
 
 const Header = props => {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Header = props => {
         <header className='d-flex flex-row justify-content-between align-items-center p-3 border-bottom'>
             <div className='d-flex flex-row justify-content-start align-items-center' style={{ cursor: 'pointer' }} onClick={clickLogo}>
                 <Logo />
-                <h3 className='ms-2 mb-0 text-info'>NFT MARKET</h3>
+                <h3 className='ms-2 mb-0 text-info'>FUJI TESTNET</h3>
             </div>
             <div className='d-flex flex-row justify-content-end align-items-center me-1 me-md-4'>
                 {
@@ -23,7 +24,7 @@ const Header = props => {
 
 const ConnectButton = ({ onClick }) => {
     return (
-        <div className='d-flex flex-column justify-content-center align-items-center bg-success text-white border border-white rounded-pill py-2 px-3' onClick={onClick}>
+        <div className='d-flex flex-column justify-content-center align-items-center bg-success text-white border border-white rounded-pill py-2 px-3 btn-login' onClick={onClick}>
             <p className='text-button-connect mb-0'>LOG IN</p>
         </div>
     );

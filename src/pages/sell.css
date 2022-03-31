@@ -56,8 +56,8 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 .sell-container {
-    min-height: calc(100vh - 153px);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-height: calc(100vh - 122px);
 }

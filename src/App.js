@@ -15,8 +15,8 @@ import SellPage from './pages/SellPage';
 import { login } from './api/api';
 
 function App() {
-  const [isLoaded, setLoaded] = useState(false);
   const { active, account, library, activate } = useWeb3React();
+  const [isLoaded, setLoaded] = useState(false);
   const [conn, setConn] = useState(false);
 
   useEffect(() => {
@@ -28,26 +28,45 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if(active)
+    if (active)
       setConn(true);
     else
       setConn(false);
   }, [active]);
 
   useEffect(() => {
-    if(conn) {
+    if (conn) {
       login(account).then(res => {
         console.log(res);
       });
     }
   }, [conn]);
 
-  const connectMetamask = async() => {
-    if(window.ethereum) {
+  const connectMetamask = async () => {
+    if (window.ethereum) {
       try {
+        // check if the chain to connect to is installed
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xa869' }], // chainId must be in hexadecimal numbers
+        });
         await activate(injected);
-      } catch(ex) {
-        console.log(ex);
+      } catch (error) {
+        if(error.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: '0xa869',
+                  rpcUrl: 'https://api.avax-test.network/ext/bc/C/rpc',
+                },
+              ],
+            });
+          } catch (addError) {
+            console.log(addError)
+          }
+        }
       }
     } else {
       Swal.fire({
@@ -59,7 +78,7 @@ function App() {
     }
   }
 
-  if(!isLoaded)
+  if (!isLoaded)
     return (
       <Loading />
     );

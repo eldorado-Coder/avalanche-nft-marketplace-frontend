@@ -17,7 +17,6 @@ const NFTItem = props => {
     useEffect(() => {
         fetch(props.data.tokenUri).then(res => {
             res.json().then(result => {
-                //console.log(result);
                 setImgUrl(result.image);
                 const item_name = result.name + ' #' + props.data.tokenId;
                 setItemName(item_name);
