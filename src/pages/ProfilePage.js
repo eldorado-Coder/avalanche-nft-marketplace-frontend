@@ -26,7 +26,7 @@ const ProfilePage = props => {
                         const collected = await getTokenData(res.owned);
                         setCollectedData(collected);
                         setLoading(false);
-                    }
+                    } else setLoading(false);
                     if (res.created.length > 0) {
                         const created = await getTokenData(res.created);
                         setCreatedData(created);
