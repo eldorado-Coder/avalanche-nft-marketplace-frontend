@@ -4,9 +4,12 @@
 }
 
 .nft-item {
-  height: 25rem;
+  height: 28rem;
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .item-text-title {

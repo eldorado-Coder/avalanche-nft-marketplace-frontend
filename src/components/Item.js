@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import LikeOutline from './assets/like_outline.png';
 import LikeFilled from './assets/like_filled.png';
 import AvaxLogo from './assets/avax.png';
@@ -13,6 +13,17 @@ const NFTItem = props => {
     const [favCount, setFavCount] = useState(0);
     const [isFav, setFav] = useState(false);
     const [itemName, setItemName] = useState('');
+    const [height, setHeight] = useState(0);
+    const NFTitem  = useRef()
+
+    useLayoutEffect(() => {
+        function updateSize() {
+            setHeight(NFTitem.current.getBoundingClientRect().width);
+        }
+        window.addEventListener('resize', updateSize);
+        updateSize();
+        return () => window.removeEventListener('resize', updateSize);
+    }, []);
 
     useEffect(() => {
         fetch(props.data.tokenUri).then(res => {
@@ -45,9 +56,8 @@ const NFTItem = props => {
     }
 
     return (
-        
-            <div className='border nft-item'>
-                <img src={imgUrl} alt='NFT here' className='w-100 h-75' />
+            <div className='border nft-item' ref={NFTitem}>
+                <img src={imgUrl} alt='NFT here' className='w-100'  height={height} />
                 <div className='d-flex flex-row justify-content-between p-2'>
                     <div className='d-flex flex-column justify-content-start align-items-start'>
                         <p className='mt-1 ms-2 item-text-title'>{itemName}</p>

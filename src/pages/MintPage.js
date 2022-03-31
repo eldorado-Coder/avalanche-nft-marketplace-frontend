@@ -7,6 +7,7 @@ import NftABI from '../abi/nft.abi.json';
 import { uploadImageToPinata, uploadMetaDataToPinata } from '../api/pinata';
 import { createNft } from '../api/api';
 import Loading from '../components/Loading';
+import {ThreeDots} from 'react-loader-spinner'
 
 const thumb = {
     display: 'inline-flex',
@@ -34,7 +35,7 @@ const MintPage = props => {
     const [amount, setAmount] = useState(0);
     const [imgUrl, setImgUrl] = useState('');
     const [minting, setMinting] = useState(false);
-    const [uploading, setUploading] = useState(true);
+    // const [uploading, setUploading] = useState(true);
     const [onDrop, setOnDrop] = useState(false);
 
     const contractAddress = "0xdC16363e321fa962A85D5455c71572F35d7aB576";
@@ -107,7 +108,7 @@ const MintPage = props => {
                 image: imgUrl
             };
             uploadMetaDataToPinata(meta_data).then(res => {
-                setUploading(false);
+                // setUploading(false);
                 const url = 'https://gateway.pinata.cloud/ipfs/' + res.IpfsHash;
                 if (amount < 2) {
                     contract.mint(url).then(res => {
@@ -178,58 +179,57 @@ const MintPage = props => {
     }
 
     return (
-        <React.Fragment>
-            {!minting && <section className="container create-container pb-2 ma">
-                <h1>Create New Item</h1>
-                <div className='row d-flex align-items-center'>
-                    <div className='col-md-12 col-lg-6'>
-                        <h4>Image</h4>
-                        <div {...getRootProps({ className: 'dropzone' })} >
-                            <input {...getInputProps()} />
-                            <span>File types supported: JPG, PNG Max size: 100 MB</span>
-                            <div className='dropzone-placeholder'>
-                                <div className={'dropzone-placeholder-mask'}>
-                                    {thumbs}
-                                    {!onDrop && <svg xmlns="http://www.w3.org/2000/svg" opacity={0.15} width={84} height={84} fill="currentColor" className="bi bi-card-image" viewBox="0 0 16 16">
-                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                                        <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z" />
-                                    </svg>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='col-md-12 col-lg-6'>
-                        <label htmlFor='amount form-label font-weight-bold'>Amount</label>
-                        <input type='number' name='amount' value={amount} onChange={(e) => setAmount(e.target.value)} className='amount-input mt-2'></input>
-                    </div>
-                </div>
-
-                <div className="mb-3">
-                    <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
-                    <input className="form-control" id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Description</label>
-                    <textarea disabled={minting} onChange={(e) => setDescription(e.target.value)} value={description} className="form-control" placeholder='Provide a detail description of your item.' id="exampleFormControlTextarea1" rows="3" required></textarea>
-                </div>
-                <div className='mt-3'>
-                    <button type="button" disabled={minting && uploading} className="btn btn-secondary" onClick={clickCreate}>Create</button>
-                </div>
-            </section>}
+        <section className="container create-container pb-2 ma">
             {minting && <div
                 style={{
-                    width: "100%",
-                    height: "100",
+                    height: "100vh",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    position: 'absolute',
+                    left: '50%'
                 }}
             >
-                <Loading />
+                <ThreeDots />
             </div>}
-        </React.Fragment>
+            <h1>Create New Item</h1>
+            <div className='row d-flex align-items-center'>
+                <div className='col-md-12 col-lg-6'>
+                    <h4>Image</h4>
+                    <div {...getRootProps({ className: 'dropzone' })} >
+                        <input disabled={minting} {...getInputProps()} />
+                        <span>File types supported: JPG, PNG Max size: 100 MB</span>
+                        <div className='dropzone-placeholder'>
+                            <div className={'dropzone-placeholder-mask'}>
+                                {thumbs}
+                                {!onDrop && <svg xmlns="http://www.w3.org/2000/svg" opacity={0.15} width={84} height={84} fill="currentColor" className="bi bi-card-image" viewBox="0 0 16 16">
+                                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                                    <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z" />
+                                </svg>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='col-md-12 col-lg-6'>
+                    <label htmlFor='amount form-label font-weight-bold'>Amount</label>
+                    <input type='number' name='amount' value={amount} disabled={minting} onChange={(e) => setAmount(e.target.value)} className='amount-input mt-2'></input>
+                </div>
+            </div>
+
+            <div className="mb-3">
+                <label htmlFor="exampleFormControlInput1" className="form-label">Name</label>
+                <input className="form-control" disabled={minting} id="exampleFormControlInput1" placeholder="Item name" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div className="mb-3">
+                <label htmlFor="exampleFormControlTextarea1" className="form-label">Description</label>
+                <textarea disabled={minting} onChange={(e) => setDescription(e.target.value)} value={description} className="form-control" placeholder='Provide a detail description of your item.' id="exampleFormControlTextarea1" rows="3" required></textarea>
+            </div>
+            <div className='mt-3'>
+                <button type="button" disabled={minting} className="btn btn-secondary" onClick={clickCreate}>Create</button>
+            </div>
+        </section>
     );
 }
 

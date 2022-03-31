@@ -7,9 +7,9 @@ const MainPage = props => {
 
     const [orderData, setOrderData] = useState([]);
     const [tokenData, setTokenData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     useEffect(() => {
-        setLoading(true);
+        // setLoading(true);
         getAllOrders().then(res => {
             setOrderData(res);
             const tokenIds = [];
@@ -18,14 +18,14 @@ const MainPage = props => {
             });
             getTokenData(tokenIds).then(result => {
                 setTokenData(result);
-                setLoading(false)
+                // setLoading(false)
             });
         })
     }, []);
 
     return (
         <React.Fragment>
-            {!loading && <div className='row m-auto px-lg-5 px-md-1 px-sm-2 main-container'>
+            <div className='row m-auto px-lg-5 px-md-1 px-sm-2 main-container'>
                 {
                     tokenData.map((item, index) => {
                         return (
@@ -35,8 +35,8 @@ const MainPage = props => {
                         );
                     })
                 }
-            </div>}
-            {loading && <Loading />}
+            </div>
+            {/* {loading && <Loading />} */}
         </React.Fragment>
     );
 }

@@ -8,7 +8,7 @@ import { parseEther } from '@ethersproject/units';
 import marketplaceABI from '../abi/marketplace.abi.json';
 import nftABI from '../abi/nft.abi.json';
 import Swal from 'sweetalert2';
-import Loading from '../components/Loading';
+import { ThreeDots } from 'react-loader-spinner'
 
 const AVAX_ICON = '/img/avax.png'
 const SellPage = props => {
@@ -56,7 +56,6 @@ const SellPage = props => {
                     contract.createOrderForSale(tokenId, '0x0000000000000000000000000000000000000000', parseEther('' + price)).then(res => {
                         res.wait().then(result => {
                             const orderId = result.events[3].args[1].toNumber();
-
                             createOrder(orderId, tokenId, '0x0000000000000000000000000000000000000000', parseEther(price).toString(), props.account).then(res => {
                                 if (res != null) {
                                     Swal.fire({
@@ -79,48 +78,64 @@ const SellPage = props => {
                         setSelling(false);
                     });
                 });
-            });
+            }).catch(err => {
+                setSelling(false);
+                console.log('err - ', err)
+            }
+            );
         }
     }
 
     return (
         <React.Fragment>
-            {!selling &&
-                <div className='container sell-container'>
-                    <div className='row'>
-                        <div className='col-md-12 col-lg-6 mt-4 d-flex flex-column justify-content-center min-height-90vh'>
-                            <h3>List item for sale</h3>
-                            <form>
-                                <div className="form-group mt-4">
-                                    <span className='price-text mb-2'>Price</span>
-                                    <div className='d-flex mb-4'>
-                                        <div className='eth-select d-flex align-items-center'>
-                                            <img src={AVAX_ICON} width={24} height={24} className="mx-2" alt='alt' />
-                                            <span>AVAX</span>
-                                            <div className='arrow-down ms-auto me-2' />
-                                        </div>
-                                        <div className='amount-input ms-2 p-0 w-100 d-flex align-items-center'>
-                                            <input placeholder='Amount' value={price} type="number" onChange={(e) => setPrice(e.target.value)} required />
-                                        </div>
+            {/* {!selling && */}
+            {selling && <div
+                style={{
+                    height: "100vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: 'absolute',
+                    left: '50%'
+                }}
+            >
+                <ThreeDots />
+            </div>}
+            <div className='container sell-container'>
+                <div className='row'>
+                    <div className='col-md-12 col-lg-6 mt-4 d-flex flex-column justify-content-center min-height-90vh'>
+                        <h3>List item for sale</h3>
+                        <form>
+                            <div className="form-group mt-4">
+                                <span className='price-text mb-2'>Price</span>
+                                <div className='d-flex mb-4'>
+                                    <div className='eth-select d-flex align-items-center'>
+                                        <img src={AVAX_ICON} width={24} height={24} className="mx-2" alt='alt' />
+                                        <span>AVAX</span>
+                                        <div className='arrow-down ms-auto me-2' />
                                     </div>
-                                    <span className='price-text mb-2'>Fees</span>
-                                    <div className='service-fee d-flex justify-content-between mb-4'>
-                                        <span>Service Fee</span>
-                                        <span>2.5%</span>
+                                    <div className='amount-input ms-2 p-0 w-100 d-flex align-items-center'>
+                                        <input placeholder='Amount' disabled={selling} value={price} type="number" onChange={(e) => setPrice(e.target.value)} required />
                                     </div>
-                                    <button className='btn-listing mt-4 mx-auto text-center' onClick={clickCreateOrder}>
-                                        Complete Listing
-                                    </button>
                                 </div>
-                            </form>
-                        </div>
-                        <div className='col-md-12 col-lg-6 flex-column min-height-90vh d-flex justify-content-center align-items-center'>
-                            <span className='price-text my-4'>Preview</span>
-                            <ProfileItem className='preview-item' type='preview' price={price} data={data} account={props.account} />
-                        </div>
+                                <span className='price-text mb-2'>Fees</span>
+                                <div className='service-fee d-flex justify-content-between mb-4'>
+                                    <span>Service Fee</span>
+                                    <span>2.5%</span>
+                                </div>
+                                <button disabled={selling} className='btn-listing mt-4 mx-auto text-center' onClick={clickCreateOrder}>
+                                    Complete Listing
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                </div>}
-            {selling && <Loading />}
+                    <div className='col-md-12 col-lg-6 flex-column min-height-90vh d-flex justify-content-center align-items-center'>
+                        <span className='price-text my-4'>Preview</span>
+                        <ProfileItem className='preview-item' type='preview' price={price} data={data} account={props.account} />
+                    </div>
+                </div>
+            </div>
+            {/* {selling && <ThreeDots />} */}
         </React.Fragment>
     );
 }
