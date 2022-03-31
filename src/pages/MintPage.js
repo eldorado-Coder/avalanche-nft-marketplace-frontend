@@ -109,7 +109,7 @@ const MintPage = props => {
             };
             uploadMetaDataToPinata(meta_data).then(res => {
                 // setUploading(false);
-                const url = 'https://gateway.pinata.cloud/ipfs/' + res.IpfsHash;
+                const url = 'https://breakout.mypinata.cloud/ipfs/' + res.IpfsHash;
                 if (amount < 2) {
                     contract.mint(url).then(res => {
                         res.wait().then(result => {
