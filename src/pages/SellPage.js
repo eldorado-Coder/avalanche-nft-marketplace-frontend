@@ -89,19 +89,20 @@ const SellPage = props => {
     return (
         <React.Fragment>
             {/* {!selling && */}
-            {selling && <div
-                style={{
-                    height: "100vh",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    position: 'absolute',
-                    left: '50%'
-                }}
-            >
-                <ThreeDots />
-            </div>}
+
             <div className='container sell-container'>
+                {selling && <div
+                    style={{
+                        height: "90vh",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: 'absolute',
+                        left: '50%'
+                    }}
+                >
+                    <ThreeDots />
+                </div>}
                 <div className='row'>
                     <div className='col-md-12 col-lg-6 mt-4 d-flex flex-column justify-content-center min-height-90vh'>
                         <h3>List item for sale</h3>

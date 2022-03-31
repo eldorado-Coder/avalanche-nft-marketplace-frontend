@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NFTItem from '../components/Item';
 import { getAllOrders, getTokenData } from '../api/api';
-import Loading from '../components/Loading';
 
 const MainPage = props => {
 
@@ -12,6 +11,7 @@ const MainPage = props => {
         // setLoading(true);
         getAllOrders().then(res => {
             setOrderData(res);
+            console.log(res);
             const tokenIds = [];
             res.forEach(order => {
                 tokenIds.push(order.tokenId);
@@ -30,7 +30,7 @@ const MainPage = props => {
                     tokenData.map((item, index) => {
                         return (
                             <div className='col-sm-12 col-md-4 col-lg-3 px-3 px-xl-6 px-lg-2 px-sm-6 px-md-2 py-3' key={index}>
-                                <NFTItem data={item} price={orderData[index].price} account={props.account} orderId={orderData[index].id} />
+                                <NFTItem data={item} price={orderData[index] ? orderData[index].price : 0} account={props.account} orderId={orderData[index] ? orderData[index].id : 0} />
                             </div>
                         );
                     })

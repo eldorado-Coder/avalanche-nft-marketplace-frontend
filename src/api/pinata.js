@@ -3,8 +3,8 @@ import FormData from 'form-data';
 
 const url_file = 'https://api.pinata.cloud/pinning/pinFileToIPFS';
 const url_json = 'https://api.pinata.cloud/pinning/pinJSONToIPFS'
-const API_KEY = '4faa835f88b04bfff75c';
-const API_SECRET = '83ee05be67b55a1ff93c75dd81162ef872a97b6362c4f074e00489c2ab0484cd';
+const API_KEY = 'ff8919b9155bf172cde0';
+const API_SECRET = '6420cae88534cb7c4f6dbc0d4089c21b0978bcfa2444c5cb10cce004e0d65fd0';
 
 export async function uploadImageToPinata(data) {
     const formData = new FormData();
