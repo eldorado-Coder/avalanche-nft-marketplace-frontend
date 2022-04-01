@@ -7,7 +7,7 @@ import NftABI from '../abi/nft.abi.json';
 import { uploadImageToPinata, uploadMetaDataToPinata } from '../api/pinata';
 import { createNft } from '../api/api';
 import Loading from '../components/Loading';
-import {ThreeDots} from 'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 
 const thumb = {
     display: 'inline-flex',
@@ -35,7 +35,7 @@ const MintPage = props => {
     const [amount, setAmount] = useState(0);
     const [imgUrl, setImgUrl] = useState('');
     const [minting, setMinting] = useState(false);
-    // const [uploading, setUploading] = useState(true);
+    const [uploading, setUploading] = useState(true);
     const [onDrop, setOnDrop] = useState(false);
 
     const contractAddress = "0xdC16363e321fa962A85D5455c71572F35d7aB576";
@@ -63,6 +63,7 @@ const MintPage = props => {
             try {
                 (async () => {
                     const res = await uploadImageToPinata(file);
+                    setUploading(false);
                     const url = 'https://breakout.mypinata.cloud/ipfs/' + res.IpfsHash;
                     setImgUrl(url);
                 })();
@@ -146,11 +147,13 @@ const MintPage = props => {
                     contract.mintBatch(uris).then(res => {
                         res.wait().then(result => {
                             const txResults = [];
+                            const aryTokenId = [];
                             result.events.forEach(event => {
                                 const tokenId = event.args[2].toNumber();
-                                const txRes = createNft(tokenId, url, props.account);
-                                txResults.push(txRes);
+                                aryTokenId.push(tokenId);
                             });
+                            const txRes = createNft(aryTokenId, url, props.account);
+                            txResults.push(txRes);
                             Promise.all(txResults).then(() => {
                                 Swal.fire({
                                     title: 'Minting Report',
@@ -227,7 +230,7 @@ const MintPage = props => {
                 <textarea disabled={minting} onChange={(e) => setDescription(e.target.value)} value={description} className="form-control" placeholder='Provide a detail description of your item.' id="exampleFormControlTextarea1" rows="3" required></textarea>
             </div>
             <div className='mt-3'>
-                <button type="button" disabled={minting} className="btn btn-secondary" onClick={clickCreate}>Create</button>
+                <button type="button" disabled={minting || uploading}  className="btn btn-secondary" onClick={clickCreate}>Create</button>
             </div>
         </section>
     );
