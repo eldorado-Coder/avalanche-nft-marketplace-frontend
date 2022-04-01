@@ -6,7 +6,6 @@ import { Contract } from '@ethersproject/contracts';
 import NftABI from '../abi/nft.abi.json';
 import { uploadImageToPinata, uploadMetaDataToPinata } from '../api/pinata';
 import { createNft } from '../api/api';
-import Loading from '../components/Loading';
 import { ThreeDots } from 'react-loader-spinner'
 
 const thumb = {

@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
-// Axios.defaults.baseURL = 'https://wow-marketplace.herokuapp.com/api/';
-Axios.defaults.baseURL = 'http://localhost:5000/api/';
+Axios.defaults.baseURL = 'https://wow-marketplace.herokuapp.com/api/';
+// Axios.defaults.baseURL = 'http://localhost:5000/api/';
 
 export async function getUserData(addr) {
     const result = await Axios.get('/users/current', {
